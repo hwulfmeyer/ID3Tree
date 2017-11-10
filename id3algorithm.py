@@ -4,6 +4,12 @@ This file is for the methods concerning everything the id3 algorithm
 
 
 class Tree(object):
+    """
+    :param self.classes: two-dimensional list where each row is a class with the number of instances
+        e.g. [["class1", 123], ["class2", 234], ["class3", 345]]
+    :param self.entropy: float value of the entropy in this node
+    :param self.childs: one-dimensional list containing the references to the child nodes
+    """
     def __init__(self):
         self.classes = []
         self.entropy = None
@@ -16,6 +22,14 @@ class Tree(object):
 
 
 class Node(object):
+    """
+    :param self.classes: two-dimensional list where each row is a class with the number of instances
+        e.g. [["class1", 123], ["class2", 234], ["class3", 345]]
+    :param self.entropy: float value of the entropy in this node
+    :param self.childs: one-dimensional list containing the references to the child nodes
+    :param self.splitattr: one-dimensional list containing the attribute taken for the split and
+        the value of the attribute all the instances in this node have e.g.: ["Weather", "cold"]
+    """
     def __init__(self):
         self.classes = []
         self.entropy = None
