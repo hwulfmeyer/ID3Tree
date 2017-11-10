@@ -10,7 +10,15 @@ filepathdata = "datasets/cardaten/car.data"
 
 
 classes, attributes, attribute_values = fiha.read_data_names(filepathnames)
+data = fiha.read_data(filepathdata)
 
-print(classes)
-print(attributes)
-print(attribute_values)
+print("Number of Classes: " + str(len(classes)))
+print("Number of Attributes: " + str(len(attributes)))
+print("Number of Instances: " + str(len(data)))
+#print(attribute_values)
+#print(data)
+
+# at this point call the id3 algorithm and build tree
+tree = id3.test_node_class()
+tree.print()
+
