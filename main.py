@@ -7,4 +7,6 @@ import id3algorithm as id3
 
 print(fh.mult(10, 20))
 
+print("Hello world")
+
 
