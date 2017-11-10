@@ -19,6 +19,9 @@ print("Number of Instances: " + str(len(data)))
 #print(data)
 
 # at this point call the id3 algorithm and build tree
-tree = id3.test_node_class()
-tree.print()
+dtree = id3.test_node_class()
+dtree.print()
 
+
+# at this point call the xml writer
+fiha.write_xml(dtree)
