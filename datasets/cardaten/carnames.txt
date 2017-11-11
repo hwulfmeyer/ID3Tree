@@ -1,4 +1,4 @@
-class values: class values:
+class values: unacc, acc, good, vgood
 attributes: buying, maint, doors, persons, lug_boot, safety
 buying: v-high, high, med, low
 maint: v-high, high, med, low
