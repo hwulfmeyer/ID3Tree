@@ -2,7 +2,7 @@
 This file is for the methods concerning everything from file reading to file writing
 """
 import re
-import xml.etree.cElementTree as XmlTree
+import xml.etree.ElementTree as XElementTree
 
 
 def read_data_names(filepath):
@@ -50,33 +50,33 @@ def read_data(filepath):
     return data
 
 
-def xmlcreator(dtree, root):
+def buildxmltree(cur_node, xml_parent):
     """
     recursion funtction to output the leaves and nodes, but not the roo
 
-    :param dtree:
-    :param root:
+    :param cur_node:
+    :param xml_parent:
     :return:
     """
-    for childs1 in dtree.childs:
-        if len(childs1.classes) > 1:
-            root1 = XmlTree.SubElement(root, "node", classes=childs1.classes,
-                                       entropy=str(childs1.entropy), attr=childs1.splitattr[1])
-            xmlcreator(childs1, root1)
-        else:
-            XmlTree.SubElement(root, "node", classes=childs1.classes,
-                               entropy=str(dtree.entropy), attr=dtree.splitattr[1]).text = str(childs1.classes[0][0])
+    if len(cur_node.childs) > 1:
+        for node_child in cur_node.childs:
+                xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
+                                                    entropy=str(node_child.entropy), attr=node_child.splitattr[1])
+                buildxmltree(node_child, xml_child)
+
+    else:
+        xml_parent.text = str(cur_node.classes[0][0])
 
 
 def write_xml(dtree):
     """
-    function, that creates a root of ElementTree and prtinting final XML
+    function, that creates a root of ElementTree and writing final XML
 
     :param dtree:
     :return:
     """
-    root = XmlTree.Element("tree", classes=dtree.classes, entropy=str(dtree.entropy))
-    xmlcreator(dtree, root)
-    tree = XmlTree.ElementTree(root)
+    root = XElementTree.Element("tree", classes=dtree.classes_to_string(), entropy=str(dtree.entropy))
+    buildxmltree(dtree, root)
+    tree = XElementTree.ElementTree(root)
     tree.write("test1.xml")
     return 0
