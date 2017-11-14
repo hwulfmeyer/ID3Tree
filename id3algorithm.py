@@ -30,10 +30,12 @@ class Node(Tree):
 
     :param self.splitattr: one-dimensional list containing the attribute taken for the split and
         the value of the attribute all the instances in this node have e.g.: ["Weather", "cold"]
+        self.splitattributes: one.dimensional list containg each attribute already used
     """
     def __init__(self):
         Tree.__init__(self)
         self.splitattr = []
+        self.splitattributes = []
 
 
 def entropy(classes, instances):
@@ -54,6 +56,10 @@ def entropy(classes, instances):
         if pfraction != 0:
             result -= pfraction * math.log(pfraction, len(classes))
     return result
+
+def infogain():
+    #TODO
+    return 0
 
 
 def test_node_class():
