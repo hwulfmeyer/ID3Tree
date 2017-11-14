@@ -9,11 +9,11 @@ def read_data_names(filepath):
     """
     function to read class names & attributes
 
-    :param filepath: the relative path to the file containing the specifications of the data
+    :param filepath: the relative path to the file containing the specifications of the attribute_values
     :return: a tuple of lists
         classes: is a one-dimensional list containing the class names
         attributes: is a one-dimensional list containing the attribute names
-        attributes_values: is a two-dimensional list where each row respresents
+        attribute_values: is a two-dimensional list where each row respresents
             one attribute(in the order of 'attributes') and the possible values
     """
 
@@ -25,12 +25,12 @@ def read_data_names(filepath):
     attributes = re.sub(r'^' + re.escape("attributes: "), '', lines.pop(0))
     attributes = attributes.split(", ")
 
-    attributes_values = []
+    attribute_values = []
     for i in range(0, len(attributes)):
         values = re.sub(r'^' + re.escape(attributes[i] + ": "), '', lines.pop(0))
-        attributes_values.append(values.split(", "))
+        attribute_values.append(values.split(", "))
 
-    return classes, attributes, attributes_values
+    return classes, attributes, attribute_values
 
 
 def read_data(filepath):
@@ -65,12 +65,10 @@ def buildxmltree(cur_node, xml_parent):
 
     else:
         # get most popular class
-        text = ""
         largestclass = -1
         for dclass in cur_node.classes:
             if dclass[1] > largestclass:
-                text = dclass[0]
-        xml_parent.text = text
+                xml_parent.text = dclass[0]
 
 
 def write_xml(dtree):
