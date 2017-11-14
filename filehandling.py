@@ -4,6 +4,7 @@ This file is for the methods concerning everything from file reading to file wri
 import re
 import xml.etree.cElementTree as ET
 
+
 def read_data_names(filepath):
     """
     function to read class names & attributes
@@ -48,28 +49,23 @@ def read_data(filepath):
         data.append(line.split(","))
     return data
 
-def printForXML(dtree,root):  #recursion funtction to output the leaves and nodes, but not the root
 
+# recursion funtction to output the leaves and nodes, but not the root
+def xmlcreator(dtree, root):  
         for childs1 in dtree.childs:
-            if(len(childs1.classes) > 1):
-                root1=ET.SubElement(root, "node",classes = childs1.classes, entropy = str(childs1.entropy), attr = childs1.splitattr[1] )
-                printForXML(childs1, root1)
+            if len(childs1.classes) > 1:
+                root1 = ET.SubElement(root, "node", classes=childs1.classes,
+                                      entropy=str(childs1.entropy), attr=childs1.splitattr[1])
+                xmlcreator(childs1, root1)
             else:
-                    ET.SubElement(root, "node", classes=childs1.classes, entropy=str(dtree.entropy), attr=dtree.splitattr[1]).text = str(childs1.classes[0][0])
+                    ET.SubElement(root, "node", classes=childs1.classes,
+                                  entropy=str(dtree.entropy), attr=dtree.splitattr[1]).text = str(childs1.classes[0][0])
 
 
-
-
-
-
-
-#function, that creates a root of ElementTree and prtinting final XML
+# function, that creates a root of ElementTree and prtinting final XML
 def write_xml(dtree):
-    root = ET.Element("tree", classes = dtree.classes, entropy =str(dtree.entropy))
-    printForXML(dtree, root)
-    tree= ET.ElementTree(root)
+    root = ET.Element("tree", classes=dtree.classes, entropy=str(dtree.entropy))
+    xmlcreator(dtree, root)
+    tree = ET.ElementTree(root)
     tree.write("test1.xml")
-
-#TODO: It seems, that it works with example, whatever, maybe It should be modified in final reliese
-
     return 0
