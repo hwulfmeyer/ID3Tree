@@ -3,9 +3,10 @@ This file is for the methods concerning everything from file reading to file wri
 """
 import re
 import xml.etree.ElementTree as XElementTree
+import id3algorithm as id3
 
 
-def read_data_names(filepath):
+def read_data_names(filepath: str):
     """
     function to read class names & attributes
 
@@ -16,7 +17,6 @@ def read_data_names(filepath):
         attribute_values: is a two-dimensional list where each row respresents
             one attribute(in the order of 'attributes') and the possible values
     """
-
     with open(filepath, "r") as f:
         lines = f.read().splitlines()
 
@@ -33,7 +33,7 @@ def read_data_names(filepath):
     return classes, attributes, attribute_values
 
 
-def read_data(filepath):
+def read_data(filepath: str):
     """
     function to read the actual data
 
@@ -50,7 +50,7 @@ def read_data(filepath):
     return data
 
 
-def buildxmltree(cur_node, xml_parent):
+def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
     """
     recursion function to output the leaves and nodes, but not the roo
 
@@ -61,7 +61,7 @@ def buildxmltree(cur_node, xml_parent):
         for node_child in cur_node.childs:
                 xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
                                                     entropy=str(node_child.entropy), attr=node_child.splitattr[1])
-                buildxmltree(node_child, xml_child)
+                buildxmltree(cur_node=node_child, xml_parent=xml_child)
 
     else:
         # get most popular class
@@ -71,13 +71,33 @@ def buildxmltree(cur_node, xml_parent):
                 xml_parent.text = dclass[0]
 
 
-def write_xml(dtree):
+def indent(xmlnode: XElementTree.Element, level=0):
+    i = "\n" + level*"  "
+    if len(xmlnode):
+        if not xmlnode.text or not xmlnode.text.strip():
+            xmlnode.text = i + "  "
+        if not xmlnode.tail or not xmlnode.tail.strip():
+            xmlnode.tail = i
+        for xmlnode in xmlnode:
+            indent(xmlnode, level + 1)
+        if not xmlnode.tail or not xmlnode.tail.strip():
+            xmlnode.tail = i
+    else:
+        if level and (not xmlnode.tail or not xmlnode.tail.strip()):
+            xmlnode.tail = i
+
+
+def write_xml(dtree: id3.Node):
     """
     function, that creates a root of ElementTree and writing final XML
 
     :param dtree: Decision Tree object, see id3algorithm.py class Tree
     """
     root = XElementTree.Element("tree", classes=dtree.classes_to_string(), entropy=str(dtree.entropy))
-    buildxmltree(dtree, root)
+    buildxmltree(cur_node=dtree, xml_parent=root)
+    indent(xmlnode=root)
     tree = XElementTree.ElementTree(root)
-    tree.write("test1.xml")
+    tree.write("test1.xml", "UTF-8", True)
+
+
+

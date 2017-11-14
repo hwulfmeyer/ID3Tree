@@ -3,6 +3,7 @@ This file is for the methods concerning everything the id3 algorithm
 """
 import math
 
+
 class Tree(object):
     """
     class to create a tree object
@@ -39,7 +40,7 @@ class Node(Tree):
         self.data = []
 
 
-def entropy(classes, instances):
+def entropy(classes: list, instances: list):
     """
     function to calculate the entropy of the given instances
 
@@ -57,6 +58,7 @@ def entropy(classes, instances):
         if pfraction != 0:
             result -= pfraction * math.log(pfraction, len(classes))
     return result
+
 
 def infogain():
     #TODO
