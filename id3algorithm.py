@@ -36,6 +36,7 @@ class Node(Tree):
         Tree.__init__(self)
         self.splitattr = []
         self.splitattributes = []
+        self.data = []
 
 
 def entropy(classes, instances):
@@ -47,7 +48,7 @@ def entropy(classes, instances):
             one attribute(in the order of 'attributes') and the possible values
     :return: entropy of our instances
     """
-    # extract last column containg the classes
+    # extract last column containing the classes
     instances = [row[-1] for row in instances]
     num_instances = len(instances)
     result = 0.0
