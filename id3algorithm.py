@@ -15,32 +15,22 @@ class Tree(object):
         self.entropy = None
         self.childs = []
 
-    def print(self):
-        print(self.classes)
-        for node in self.childs:
-            node.print(1)
+    def classes_to_string(self):
+        result = ""
+        for classes in self.classes:
+            result += str(classes[0])+":"+ str(classes[1])+","
+        return result[0:len(result)-1]
 
 
-class Node(object):
+class Node(Tree):
     """
-    :param self.classes: two-dimensional list where each row is a class with the number of instances
-        e.g. [["class1", 123], ["class2", 234], ["class3", 345]]
-    :param self.entropy: float value of the entropy in this node
-    :param self.childs: one-dimensional list containing the references to the child nodes
+    Inheritance from class Tree
     :param self.splitattr: one-dimensional list containing the attribute taken for the split and
         the value of the attribute all the instances in this node have e.g.: ["Weather", "cold"]
     """
     def __init__(self):
-        self.classes = []
-        self.entropy = None
-        self.childs = []
+        Tree.__init__(self)
         self.splitattr = []
-
-    def print(self, depth):
-        print(depth, end='')
-        print(self.classes)
-        for node in self.childs:
-            node.print(depth+1)
 
 
 def test_node_class():

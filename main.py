@@ -15,15 +15,11 @@ data = fiha.read_data(filepathdata)
 print("Number of Classes: " + str(len(classes)))
 print("Number of Attributes: " + str(len(attributes)))
 print("Number of Instances: " + str(len(data)))
-print(classes)
-#print(data)
 
 # at this point call the id3 algorithm and build tree
 dtree = id3.test_node_class()
-print (dtree.entropy)
-dtree.print()
-for childs in dtree.childs:
-    print(childs.entropy)
+
+print(dtree.classes_to_string())
 
 # at this point call the xml writer
 fiha.write_xml(dtree)

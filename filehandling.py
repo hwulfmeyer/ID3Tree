@@ -2,7 +2,7 @@
 This file is for the methods concerning everything from file reading to file writing
 """
 import re
-import xml.etree.cElementTree as ET
+import xml.etree.cElementTree as XmlTree
 
 
 def read_data_names(filepath):
@@ -50,22 +50,33 @@ def read_data(filepath):
     return data
 
 
-# recursion funtction to output the leaves and nodes, but not the root
-def xmlcreator(dtree, root):  
-        for childs1 in dtree.childs:
-            if len(childs1.classes) > 1:
-                root1 = ET.SubElement(root, "node", classes=childs1.classes,
-                                      entropy=str(childs1.entropy), attr=childs1.splitattr[1])
-                xmlcreator(childs1, root1)
-            else:
-                    ET.SubElement(root, "node", classes=childs1.classes,
-                                  entropy=str(dtree.entropy), attr=dtree.splitattr[1]).text = str(childs1.classes[0][0])
+def xmlcreator(dtree, root):
+    """
+    recursion funtction to output the leaves and nodes, but not the roo
+
+    :param dtree:
+    :param root:
+    :return:
+    """
+    for childs1 in dtree.childs:
+        if len(childs1.classes) > 1:
+            root1 = XmlTree.SubElement(root, "node", classes=childs1.classes,
+                                       entropy=str(childs1.entropy), attr=childs1.splitattr[1])
+            xmlcreator(childs1, root1)
+        else:
+            XmlTree.SubElement(root, "node", classes=childs1.classes,
+                               entropy=str(dtree.entropy), attr=dtree.splitattr[1]).text = str(childs1.classes[0][0])
 
 
-# function, that creates a root of ElementTree and prtinting final XML
 def write_xml(dtree):
-    root = ET.Element("tree", classes=dtree.classes, entropy=str(dtree.entropy))
+    """
+    function, that creates a root of ElementTree and prtinting final XML
+
+    :param dtree:
+    :return:
+    """
+    root = XmlTree.Element("tree", classes=dtree.classes, entropy=str(dtree.entropy))
     xmlcreator(dtree, root)
-    tree = ET.ElementTree(root)
+    tree = XmlTree.ElementTree(root)
     tree.write("test1.xml")
     return 0
