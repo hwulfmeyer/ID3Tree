@@ -52,11 +52,10 @@ def read_data(filepath):
 
 def buildxmltree(cur_node, xml_parent):
     """
-    recursion funtction to output the leaves and nodes, but not the roo
+    recursion function to output the leaves and nodes, but not the roo
 
-    :param cur_node:
-    :param xml_parent:
-    :return:
+    :param cur_node: the current node handled in our dtree
+    :param xml_parent: the parent of in our xml tree
     """
     if len(cur_node.childs) > 1:
         for node_child in cur_node.childs:
@@ -65,18 +64,22 @@ def buildxmltree(cur_node, xml_parent):
                 buildxmltree(node_child, xml_child)
 
     else:
-        xml_parent.text = str(cur_node.classes[0][0])
+        # get most popular class
+        text = ""
+        largestclass = -1
+        for dclass in cur_node.classes:
+            if dclass[1] > largestclass:
+                text = dclass[0]
+        xml_parent.text = text
 
 
 def write_xml(dtree):
     """
     function, that creates a root of ElementTree and writing final XML
 
-    :param dtree:
-    :return:
+    :param dtree: Decision Tree object, see id3algorithm.py class Tree
     """
     root = XElementTree.Element("tree", classes=dtree.classes_to_string(), entropy=str(dtree.entropy))
     buildxmltree(dtree, root)
     tree = XElementTree.ElementTree(root)
     tree.write("test1.xml")
-    return 0
