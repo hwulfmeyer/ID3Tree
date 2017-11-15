@@ -60,10 +60,45 @@ def entropy(classes: list, instances: list):
     return result
 
 
-def infogain():
-    #TODO
-    return 0
 
+def infogain(classes:list, instances: list, attributes: list,  attr):
+   """
+   function to calculate the informationgain of the given attribute and instances
+   :param classes: is a one-dimensional list containing the class names
+   :param instances: is a two-dimensional list where each row respresents
+          one attribute(in the order of 'attributes') and the possible values
+   :param attr: atrribute for which its calculating the infogain
+   :param attribute: is one dimensional list that contains the names of attributes\
+
+   :return InformationGain on this node
+   """
+
+
+   sub_entropy = 0
+   num_inctances = len(instances)
+   index_of_attr = attributes.index(str(attr))
+   val_freq = {}
+
+   #this loop creates a dict where counting the frequency of attribute_value: {vhigh :20, high :10} and etc
+   for i in instances:
+       if  i[index_of_attr] in val_freq:
+           val_freq [i[index_of_attr]] += 1
+       else:
+            val_freq[i[index_of_attr]] = 1
+
+
+#this loop is creating car probability_attr(where its division of number instances of certian value and number of instances)
+       #further it creates the reduced_data, where only instances with certain value of attr(for example Bying = "vhigh"
+       #and finding entropy of this class
+   for attrib in val_freq.keys():
+       probability_attr = val_freq[attrib] / num_inctances
+       reduced_data = [i for i in instances if i[index_of_attr]==attrib]
+       sub_entropy += probability_attr * entropy (classes ,reduced_data)
+
+   gain = entropy(classes, instances) - sub_entropy
+   return gain
+
+#TODO: Again, I really hope, that it will work on practise succeffully, however with first root(and attr bying) it works and show infogain 0.048
 
 def test_node_class():
     """

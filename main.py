@@ -20,6 +20,11 @@ print("Number of Instances: " + str(len(instances)))
 dtree = id3.test_node_class()
 
 print(id3.entropy(classes=classes, instances=instances))
-
 # at this point call the xml writer
 fiha.write_xml(dtree=dtree)
+
+val_freq = {"main" :1 , "lol" :2}
+i = ["main", "lol", "her"]
+val_freq[i[2]] =2
+print(id3.infogain(classes, instances, attributes, "buying"))
+print (val_freq.keys())
