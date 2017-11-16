@@ -18,11 +18,8 @@ print("Number of Instances: " + str(len(instances)))
 
 # at this point call the id3 algorithm and build tree
 # dtree = id3.test_node_class()
-dtree = id3.builddtree(classes=classes, instances=instances, attributes=attributes)
+dtree = id3.builddtree(classes=classes, instances=instances, attributes=attributes,
+                       attributesvalues=attribute_values, attributesleft=attributes.copy())
 
-#print(id3.entropy(classes=classes, instances=instances))
 # at this point call the xml writer
 fiha.write_xml(dtree=dtree)
-
-# print(id3.infogain(classes=classes, instances=instances, attributes=attributes, attr=attributes[0]))
-

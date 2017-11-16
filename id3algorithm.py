@@ -23,7 +23,7 @@ class Tree(object):
         for classes in self.classes:
             result += str(classes[0]) + ":" + str(classes[1]) + ","
         if len(result) > 0:
-            result = result[0:len(result) - 1]
+            result = result[0:-1]
         return result
 
 
@@ -50,17 +50,22 @@ def entropy(classes: list, instances: list):
     :param classes: is a one-dimensional list containing the class names
     :param instances: is a two-dimensional list where each row respresents
             one attribute(in the order of 'attributes') and the possible values
-    :return: entropy of our instances
+    :return: entropy of our instances, classes with absolute frequency in instances
     """
     # extract last column containing the classes
+    if len(instances) == 0:
+        return 0, []
     instances = [row[-1] for row in instances]
+    numclassinstances = []
     num_instances = len(instances)
     result = 0.0
     for dclass in classes:
-        pfraction = sum(inst[0] == dclass[0] for inst in instances)/num_instances
+        classfrequency = [dclass, sum(inst[0] == dclass[0] for inst in instances)]
+        pfraction = classfrequency[-1]/num_instances
         if pfraction != 0:
+            numclassinstances.append(classfrequency)
             result -= pfraction * math.log(pfraction, len(classes))
-    return result
+    return result, numclassinstances
 
 
 def infogain(classes: list, instances: list, attributes: list, attr: str):
@@ -95,20 +100,58 @@ def infogain(classes: list, instances: list, attributes: list, attr: str):
     for attrib in val_freq.keys():
         probability_attr = val_freq[attrib] / num_inctances
         reduced_data = [i for i in instances if i[index_of_attr] == attrib]
-        sub_entropy += probability_attr * entropy(classes, reduced_data)
-
-    gain = entropy(classes, instances) - sub_entropy
+        sub_entropy += probability_attr * entropy(classes, reduced_data)[0]
+    gain = entropy(classes, instances)[0] - sub_entropy
     return gain
 
 
-def builddtree(classes: list, instances: list, attributes: list):
-    root = Tree()
-    root.entropy = 0.123
-    root.classes = [["class1", 123], ["class2", 234], ["class3", 345]]
-    node_11 = Node()
-    node_12 = Node()
-    root.childs = [node_11, node_12]
-    return root
+def builddtree(classes: list, instances: list, attributes: list, attributesvalues: list, attributesleft: list):
+    """
+    PSEUDOCODE:
+    foreach attribute in node:
+        A = select best attribute from attributes (infogain)
+    foreach possible value in A:
+        create child node & remove A from Attribute list
+    recursion on child nodes while infogain != 0 and attributeslist size > 1
+    :param classes:
+    :param instances:
+    :param attributes:
+    :param attributesvalues:
+    :param attributesleft:
+    :return: decision tree
+    """
+    decisiontree = Tree()
+    decisiontree.entropy, decisiontree.classes = entropy(classes=classes, instances=instances)
+    decisiontree.childs = builddtreechilds(classes=classes, instances=instances, attributes=attributes,
+                                           attributesvalues=attributesvalues, attributesleft=attributesleft)
+    return decisiontree
+
+
+def builddtreechilds(classes: list, instances: list, attributes: list, attributesvalues: list, attributesleft: list):
+    if len(attributesleft) == 0 or len(instances) == 0:
+        return []
+    bestinfog = [None, -1]
+    for attrib in attributesleft:
+        curinfogain = infogain(classes=classes, instances=instances, attributes=attributes, attr=attrib)
+        if curinfogain > bestinfog[1]:
+            bestinfog[1] = curinfogain
+            bestinfog[0] = attrib
+    if bestinfog[1] <= 0.0:
+        return []
+    attributesleft.remove(bestinfog[0])
+    childlist = []
+    for value in attributesvalues[attributes.index(bestinfog[0])]:
+        childnode = Node()
+        childnode.splitattr = [bestinfog[0], value]
+        childnodeinstances = []
+        for instance in instances:
+            if instance[attributes.index(bestinfog[0])] == value:
+                childnodeinstances.append(instance)
+        childnode.entropy, childnode.classes = entropy(classes=classes, instances=childnodeinstances)
+        childlist.append(childnode)
+        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes,
+                                            attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
+    return childlist
 
 
 def test_node_class():

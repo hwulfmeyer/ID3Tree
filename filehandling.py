@@ -61,7 +61,7 @@ def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
         for node_child in cur_node.childs:
             if len(node_child.splitattr) > 1:
                 xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
-                                                    entropy=str(node_child.entropy), attr=node_child.splitattr[1])
+                                                    entropy=str(node_child.entropy), **{node_child.splitattr[0]:node_child.splitattr[1]})
             else:
                 xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
                                                     entropy=str(node_child.entropy), attr="")
