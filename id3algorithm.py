@@ -39,8 +39,7 @@ class Node(Tree):
     def __init__(self):
         Tree.__init__(self)
         self.splitattr = []
-        self.splitattributes = []
-        self.data = []
+        self.classname = None
 
 
 def entropy(classes: list, instances: list):
@@ -130,16 +129,22 @@ def builddtree(classes: list, instances: list, attributes: list, attributesvalue
 def builddtreechilds(classes: list, instances: list, attributes: list, attributesvalues: list, attributesleft: list):
     if len(attributesleft) == 0 or len(instances) == 0:
         return []
+
+    # get best attribute
     bestinfog = [None, -1]
     for attrib in attributesleft:
         curinfogain = infogain(classes=classes, instances=instances, attributes=attributes, attr=attrib)
         if curinfogain > bestinfog[1]:
             bestinfog[1] = curinfogain
             bestinfog[0] = attrib
-    if bestinfog[1] <= 0.0:
+
+    if bestinfog[1] <= 0:
         return []
+
     attributesleft.remove(bestinfog[0])
     childlist = []
+
+    # create child nodes
     for value in attributesvalues[attributes.index(bestinfog[0])]:
         childnode = Node()
         childnode.splitattr = [bestinfog[0], value]
@@ -149,8 +154,15 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
                 childnodeinstances.append(instance)
         childnode.entropy, childnode.classes = entropy(classes=classes, instances=childnodeinstances)
         childlist.append(childnode)
-        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes,
-                                            attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
+        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes, attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
+        largestclass = -1
+        for dclass in childnode.classes:
+            if dclass[1] > largestclass:
+                childnode.classname = dclass[0]
+        for childchild in childnode.childs:
+            if len(childchild.classes) == 0:
+                childchild.classname = childnode.classname
+
     return childlist
 
 

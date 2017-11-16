@@ -59,20 +59,13 @@ def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
     """
     if len(cur_node.childs) > 1:
         for node_child in cur_node.childs:
-            if len(node_child.splitattr) > 1:
-                xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
-                                                    entropy=str(node_child.entropy), **{node_child.splitattr[0]:node_child.splitattr[1]})
-            else:
-                xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
-                                                    entropy=str(node_child.entropy), attr="")
+            xml_child = XElementTree.SubElement(xml_parent, "node", classes=node_child.classes_to_string(),
+                                                entropy=str(node_child.entropy), **{node_child.splitattr[0]:node_child.splitattr[1]})
             buildxmltree(cur_node=node_child, xml_parent=xml_child)
 
     else:
         # get most popular class
-        largestclass = -1
-        for dclass in cur_node.classes:
-            if dclass[1] > largestclass:
-                xml_parent.text = dclass[0]
+        xml_parent.text = cur_node.classname
 
 
 def xmlindent(xmlnode: XElementTree.Element, level=0):
