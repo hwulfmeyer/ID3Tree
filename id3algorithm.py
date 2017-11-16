@@ -22,7 +22,9 @@ class Tree(object):
         result = ""
         for classes in self.classes:
             result += str(classes[0]) + ":" + str(classes[1]) + ","
-        return result[0:len(result)-1]
+        if len(result) > 0:
+            result = result[0:len(result) - 1]
+        return result
 
 
 class Node(Tree):
@@ -31,7 +33,8 @@ class Node(Tree):
 
     :param self.splitattr: one-dimensional list containing the attribute taken for the split and
         the value of the attribute all the instances in this node have e.g.: ["Weather", "cold"]
-        self.splitattributes: one.dimensional list containg each attribute already used
+    :param self.splitattributes: one.dimensional list containg each attribute left to use
+    :param self.data: contains current data(instances) in this node
     """
     def __init__(self):
         Tree.__init__(self)
@@ -60,45 +63,53 @@ def entropy(classes: list, instances: list):
     return result
 
 
+def infogain(classes: list, instances: list, attributes: list, attr: str):
+    """
+    function to calculate the informationgain of the given attribute and instances
+    TODO: Again, I really hope, that it will work on practise succeffully,
+    however with first root(and attr bying) it works and show infogain 0.048
 
-def infogain(classes:list, instances: list, attributes: list,  attr):
-   """
-   function to calculate the informationgain of the given attribute and instances
-   :param classes: is a one-dimensional list containing the class names
-   :param instances: is a two-dimensional list where each row respresents
+    :param classes: is a one-dimensional list containing the class names
+    :param instances: is a two-dimensional list where each row respresents
           one attribute(in the order of 'attributes') and the possible values
-   :param attr: atrribute for which its calculating the infogain
-   :param attribute: is one dimensional list that contains the names of attributes\
+    :param attributes: is one dimensional list that contains the names of attributes
+    :param attr: atrribute for which it's calculating the infogain
+    :return InformationGain on this node
+    """
+    sub_entropy = 0
+    num_inctances = len(instances)
+    index_of_attr = attributes.index(attr)
+    val_freq = {}
 
-   :return InformationGain on this node
-   """
-
-
-   sub_entropy = 0
-   num_inctances = len(instances)
-   index_of_attr = attributes.index(str(attr))
-   val_freq = {}
-
-   #this loop creates a dict where counting the frequency of attribute_value: {vhigh :20, high :10} and etc
-   for i in instances:
-       if  i[index_of_attr] in val_freq:
-           val_freq [i[index_of_attr]] += 1
-       else:
+    # this loop creates a dict where counting the frequency of attribute_value: {vhigh :20, high :10} and etc
+    for i in instances:
+        if i[index_of_attr] in val_freq:
+            val_freq[i[index_of_attr]] += 1
+        else:
             val_freq[i[index_of_attr]] = 1
+    """
+    this loop is creating car probability_attr(where its division of number instances of certian value and number of instances)
+    further it creates the reduced_data, where only instances with certain value of attr(for example Bying = "vhigh"
+    and finding entropy of this class
+    """
+    for attrib in val_freq.keys():
+        probability_attr = val_freq[attrib] / num_inctances
+        reduced_data = [i for i in instances if i[index_of_attr] == attrib]
+        sub_entropy += probability_attr * entropy(classes, reduced_data)
+
+    gain = entropy(classes, instances) - sub_entropy
+    return gain
 
 
-#this loop is creating car probability_attr(where its division of number instances of certian value and number of instances)
-       #further it creates the reduced_data, where only instances with certain value of attr(for example Bying = "vhigh"
-       #and finding entropy of this class
-   for attrib in val_freq.keys():
-       probability_attr = val_freq[attrib] / num_inctances
-       reduced_data = [i for i in instances if i[index_of_attr]==attrib]
-       sub_entropy += probability_attr * entropy (classes ,reduced_data)
+def builddtree(classes: list, instances: list, attributes: list):
+    root = Tree()
+    root.entropy = 0.123
+    root.classes = [["class1", 123], ["class2", 234], ["class3", 345]]
+    node_11 = Node()
+    node_12 = Node()
+    root.childs = [node_11, node_12]
+    return root
 
-   gain = entropy(classes, instances) - sub_entropy
-   return gain
-
-#TODO: Again, I really hope, that it will work on practise succeffully, however with first root(and attr bying) it works and show infogain 0.048
 
 def test_node_class():
     """

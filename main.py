@@ -17,14 +17,12 @@ print("Number of Attributes: " + str(len(attributes)))
 print("Number of Instances: " + str(len(instances)))
 
 # at this point call the id3 algorithm and build tree
-dtree = id3.test_node_class()
+# dtree = id3.test_node_class()
+dtree = id3.builddtree(classes=classes, instances=instances, attributes=attributes)
 
-print(id3.entropy(classes=classes, instances=instances))
+#print(id3.entropy(classes=classes, instances=instances))
 # at this point call the xml writer
 fiha.write_xml(dtree=dtree)
 
-val_freq = {"main" :1 , "lol" :2}
-i = ["main", "lol", "her"]
-val_freq[i[2]] =2
-print(id3.infogain(classes, instances, attributes, "buying"))
-print (val_freq.keys())
+# print(id3.infogain(classes=classes, instances=instances, attributes=attributes, attr=attributes[0]))
+
