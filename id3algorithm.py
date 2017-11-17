@@ -121,6 +121,12 @@ def builddtree(classes: list, instances: list, attributes: list, attributesvalue
     """
     decisiontree = Tree()
     decisiontree.entropy, decisiontree.classes = entropy(classes=classes, instances=instances)
+    largestclass = 0
+    for dclass in decisiontree.classes:
+        if dclass[1] > largestclass:
+            largestclass = dclass[1]
+            decisiontree.classname = dclass[0]
+    print(decisiontree.classname)
     decisiontree.childs = builddtreechilds(classes=classes, instances=instances, attributes=attributes,
                                            attributesvalues=attributesvalues, attributesleft=attributesleft)
     return decisiontree
@@ -153,15 +159,17 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
             if instance[attributes.index(bestinfog[0])] == value:
                 childnodeinstances.append(instance)
         childnode.entropy, childnode.classes = entropy(classes=classes, instances=childnodeinstances)
+
         largestclass = -1
         for dclass in childnode.classes:
             if dclass[1] > largestclass:
+                largestclass = dclass[1]
                 childnode.classname = dclass[0]
 
         childlist.append(childnode)
         childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes, attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
         for childchild in childnode.childs:
-            if childchild.entropy == 0:
+            if len(childchild.classes) == 0:
                 childchild.classname = childnode.classname
 
     return childlist

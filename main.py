@@ -25,7 +25,7 @@ dtree = id3.builddtree(classes=classes, instances=instances, attributes=attribut
 fiha.write_xml(dtree=dtree)
 # attributes: buying, maint, doors, persons, lug_boot, safety
 instance = ["high", "med", "5more", "more", "med", "high", "unacc"]
-print(dtree.classes)
+
 print(id3.getclass(dtree, instance, attributes))
 #check accuracy of our tree?
 
