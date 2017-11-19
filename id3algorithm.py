@@ -151,7 +151,7 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
             bestinfog[1] = curinfogain
             bestinfog[0] = attrib
 
-    if bestinfog[1] <= 0:
+    if bestinfog[1] <= 0.0:
         return []
 
     attributesleft.remove(bestinfog[0])
