@@ -94,7 +94,7 @@ def write_xml(dtree: id3.Node):
     buildxmltree(cur_node=dtree, xml_parent=root)
     xmlindent(xmlnode=root)
     tree = XElementTree.ElementTree(root)
-    tree.write("test1.xml", "UTF-8", True)
+    tree.write("OUTPUT_Tree.xml", "UTF-8", True)
 
 
 

@@ -70,8 +70,6 @@ def entropy(classes: list, instances: list):
 def infogain(classes: list, instances: list, attributes: list, attr: str):
     """
     function to calculate the informationgain of the given attribute and instances
-    TODO: Again, I really hope, that it will work on practise succeffully,
-    however with first root(and attr bying) it works and show infogain 0.048
 
     :param classes: is a one-dimensional list containing the class names
     :param instances: is a two-dimensional list where each row respresents
@@ -175,10 +173,6 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
     return childlist
 
 
-def getaccuracy(dtree: Tree, classes: list, instances: list, attributes: list, attributesvalues: list):
-    listpositive = []
-    #TODO
-    return 0
 
 
 def getclass(dtree: Node, instance: list, attributes: list):
