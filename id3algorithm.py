@@ -104,18 +104,16 @@ def infogain(classes: list, instances: list, attributes: list, attr: str):
 
 def builddtree(classes: list, instances: list, attributes: list, attributesvalues: list, attributesleft: list):
     """
-    PSEUDOCODE:
-    foreach attribute in node:
-        A = select best attribute from attributes (infogain)
-    foreach possible value in A:
-        create child node & remove A from Attribute list
-    recursion on child nodes while infogain != 0 and attributeslist size > 1
-    :param classes:
-    :param instances:
-    :param attributes:
-    :param attributesvalues:
-    :param attributesleft:
-    :return: decision tree
+    ID3 Algorithm start for root node
+
+    :param classes: is a one-dimensional list containing the class names
+    :param instances: is a two-dimensional list where each row respresents
+          one attribute(in the order of 'attributes') and the possible values
+    :param attributes: is one dimensional list that contains the names of attributes
+    :param attributesvalues: is a two-dimensional list where each row respresents
+            one attribute(in the order of 'attributes') and the possible values
+    :param attributesleft: attributes left for the current node to split on
+    :return: a decision tree for the data
     """
     decisiontree = Tree()
     decisiontree.entropy, decisiontree.classes = entropy(classes=classes, instances=instances)
@@ -124,13 +122,24 @@ def builddtree(classes: list, instances: list, attributes: list, attributesvalue
         if dclass[1] > largestclass:
             largestclass = dclass[1]
             decisiontree.classname = dclass[0]
-    print(decisiontree.classname)
     decisiontree.childs = builddtreechilds(classes=classes, instances=instances, attributes=attributes,
                                            attributesvalues=attributesvalues, attributesleft=attributesleft)
     return decisiontree
 
 
 def builddtreechilds(classes: list, instances: list, attributes: list, attributesvalues: list, attributesleft: list):
+    """
+    ID3 Algorithm for child nodes
+
+    :param classes: is a one-dimensional list containing the class names
+    :param instances: is a two-dimensional list where each row respresents
+          one attribute(in the order of 'attributes') and the possible values
+    :param attributes: is one dimensional list that contains the names of attributes
+    :param attributesvalues: is a two-dimensional list where each row respresents
+            one attribute(in the order of 'attributes') and the possible values
+    :param attributesleft: attributes left for the current node to split on
+    :return: childs of current node with recursion on childs
+    """
     if len(attributesleft) == 0 or len(instances) == 0:
         return []
 
@@ -165,7 +174,8 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
                 childnode.classname = dclass[0]
 
         childlist.append(childnode)
-        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes, attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
+        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes,
+                                            attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
         for childchild in childnode.childs:
             if len(childchild.classes) == 0:
                 childchild.classname = childnode.classname
@@ -173,6 +183,13 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
     return childlist
 
 
+def getaccuracy(dtree: Node, instances: list, attributes: list):
+    counter = 0
+    for instance in instances:
+        dclass = getclass(dtree=dtree, instance=instance, attributes=attributes)
+        if instance[-1] == dclass:
+            counter += 1
+    return counter/len(instances)
 
 
 def getclass(dtree: Node, instance: list, attributes: list):

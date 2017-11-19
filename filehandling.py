@@ -69,6 +69,12 @@ def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
 
 
 def xmlindent(xmlnode: XElementTree.Element, level=0):
+    """
+    function for indentation of xml file to make it viewable in a texteditor
+    :param xmlnode: XML Element node
+    :param level: depth counter
+    :return:
+    """
     i = "\n" + level*"  "
     if len(xmlnode):
         if not xmlnode.text or not xmlnode.text.strip():
@@ -86,7 +92,7 @@ def xmlindent(xmlnode: XElementTree.Element, level=0):
 
 def write_xml(dtree: id3.Node):
     """
-    function, that creates a root of ElementTree and writing final XML
+    function that creates a root of ElementTree and writing final XML
 
     :param dtree: Decision Tree object, see id3algorithm.py class Tree
     """
