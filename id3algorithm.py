@@ -117,6 +117,8 @@ def builddtree(classes: list, instances: list, attributes: list, attributesvalue
     """
     decisiontree = Tree()
     decisiontree.entropy, decisiontree.classes = entropy(classes=classes, instances=instances)
+    if decisiontree.entropy == 0.0:
+        return decisiontree
     largestclass = 0
     for dclass in decisiontree.classes:
         if dclass[1] > largestclass:
@@ -151,9 +153,6 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
             bestinfog[1] = curinfogain
             bestinfog[0] = attrib
 
-    if bestinfog[1] <= 0.0:
-        return []
-
     attributesleft.remove(bestinfog[0])
     childlist = []
 
@@ -173,23 +172,34 @@ def builddtreechilds(classes: list, instances: list, attributes: list, attribute
                 largestclass = dclass[1]
                 childnode.classname = dclass[0]
 
+        if childnode.entropy > 0:
+            childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes,
+                                                attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
+            for childchild in childnode.childs:
+                if len(childchild.classes) == 0:
+                    childchild.classname = childnode.classname
+
         childlist.append(childnode)
-        childnode.childs = builddtreechilds(classes=classes, instances=childnodeinstances, attributes=attributes,
-                                            attributesvalues=attributesvalues, attributesleft=attributesleft.copy())
-        for childchild in childnode.childs:
-            if len(childchild.classes) == 0:
-                childchild.classname = childnode.classname
 
     return childlist
 
 
-def getaccuracy(dtree: Node, instances: list, attributes: list):
-    counter = 0
-    for instance in instances:
-        dclass = getclass(dtree=dtree, instance=instance, attributes=attributes)
-        if instance[-1] == dclass:
-            counter += 1
-    return counter/len(instances)
+def get_classes(dtree: Node, attributes: list, data: list):
+    """
+    function to get the predicted classes of each instance in data
+
+    :param dtree: a 2-dimensional list containg the classes, the total frequency, the number of total instances
+        and the fraction of instances being that class
+    :param attributes: a x-dimensional list containing the probability of each attribute value to occur under a
+        specific class
+    :param data: is a two-dimensional list where each row respresents
+        one attribute(in the order of 'attributes') and the possible values
+    :return: a 1-dimensional list containg the orignal and predicted class of each instance in data
+    """
+    dataclasses = []
+    for d in data:
+        dataclasses.append([d[-1], getclass(dtree, d, attributes)])
+    return dataclasses
 
 
 def getclass(dtree: Node, instance: list, attributes: list):
@@ -201,3 +211,36 @@ def getclass(dtree: Node, instance: list, attributes: list):
         if len(dtree.childs) == 0:
             iklass = dtree.classname
     return iklass
+
+
+def calculate_error(dataclasses):
+    """
+    calculates error
+    """
+    wrong = 0
+    correct = 0
+
+    for d in dataclasses:
+            if d[0] == d[1]:
+                correct += 1
+            else:
+                wrong += 1
+    return wrong / (wrong+correct)
+
+
+def get_confusion_matrix(classes: list, dataclasses: list):
+    """
+    creates a confusion matrix
+
+    :param classes: is a one-dimensional list containing the class names
+    :param dataclasses: a 1-dimensional list containg the orignal and predicted class of each instance in data
+    :return: a 2-dimensional list with the first row being the actual class and every other row corresponding
+        to the number of instances being predicted as class x
+    """
+    confmatrix = []
+    for x in classes:
+        line = [x]
+        for y in classes:
+            line.append(sum(x == inst[0] and y == inst[1] for inst in dataclasses))
+        confmatrix.append(line)
+    return confmatrix

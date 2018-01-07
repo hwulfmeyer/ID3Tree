@@ -4,6 +4,7 @@ This file is for the methods concerning everything from file reading to file wri
 import re
 import xml.etree.ElementTree as XElementTree
 import id3algorithm as id3
+import random
 
 
 def read_data_names(filepath: str):
@@ -50,9 +51,19 @@ def read_data(filepath: str):
     return data
 
 
+def separation(instances):
+    size_train = int((len(instances)) * 2 / 3)
+    train_dataset = []
+    test_set = list(instances)  # copy the full list
+    while len(train_dataset) < size_train:
+        index = random.randrange(len(test_set))  # find the random index to append in train data set
+        train_dataset.append(test_set.pop(index))  # reduce the size of test set and increase and add the inctances in trainset
+    return train_dataset, test_set
+
+
 def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
     """
-    recursion function to output the leaves and nodes, but not the roo
+    recursion function to build the leaves and nodes, but not the root in the xml format
 
     :param cur_node: the current node handled in our dtree
     :param xml_parent: the parent of in our xml tree
@@ -70,7 +81,8 @@ def buildxmltree(cur_node: id3.Node, xml_parent: XElementTree.Element):
 
 def xmlindent(xmlnode: XElementTree.Element, level=0):
     """
-    function for indentation of xml file to make it viewable in a texteditor
+    function for indentation and newline creations of xml file to make it viewable in a texteditor
+
     :param xmlnode: XML Element node
     :param level: depth counter
     :return:
